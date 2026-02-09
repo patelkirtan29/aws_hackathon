@@ -1,15 +1,11 @@
-from ai_engine import ask_ai
+from job_agent import JobIntelligenceAgent
 
 def main():
-    print("Personal AI (type 'exit' to quit)\n")
-
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            break
-
-        response = ask_ai(user_input)
-        print("\nAI:", response, "\n")
-
+    print("AI is initialized\n")
+    agent = JobIntelligenceAgent()
+    jobs = agent.fetch_recent_jobs(company="Google", role="Software Engineer", max_results=5)
+    for job in jobs:
+        agent.dedupe_and_add(job)
+        
 if __name__ == "__main__":
     main()
