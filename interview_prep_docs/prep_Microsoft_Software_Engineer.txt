@@ -1,0 +1,20 @@
+RECENT JOB BRIEF — Microsoft (Software Engineer)
+Generated: 2026-02-09T13:14:22.757402
+
+✅ Recent highlights (min reading, max signal):
+1. [News] Revenue was $81.3 billion, up 17% year-over-year.
+2. [Signal] Operating income increased 21% to $38.3 billion.
+3. [Signal] Net income rose 60% to $38.5 billion (GAAP basis).
+4. [News] Diluted earnings per share increased by $1.02 due to a $7.6 billion net gain from OpenAI investments.
+5. [News] Microsoft Cloud revenue crossed $50 billion for the first time.
+6. [Tech] Microsoft's 2026 roadmap for AI agents and infrastructure highlights:
+
+🔗 Top links (read max 3):
+- FY26 Q2 - Press Releases - Investor Relations - Microsoft — https://www.microsoft.com/en-us/investor/earnings/fy-2026-q2/press-release-webcast
+- Microsoft Cloud and AI strength drives second quarter results - Source — https://news.microsoft.com/source/2026/01/28/microsoft-cloud-and-ai-strength-drives-second-quarter-results-3/
+- FY26 Q1 - Press Releases - Investor Relations - Microsoft — https://www.microsoft.com/en-us/investor/earnings/fy-2026-q1/press-release-webcast
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why Microsoft now?' points from the News bullets
+- Prepare: 2 coding patterns + 1 ML/system-design topic aligned to Tech bullets

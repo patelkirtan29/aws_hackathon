@@ -1,0 +1,20 @@
+RECENT JOB BRIEF — Amazon (Software Developer)
+Generated: 2026-02-09T14:41:15.479914
+
+✅ Recent highlights (min reading, max signal):
+1. Amazon reported Q4 2025 earnings on February 5, 2026, with revenue of $213.4 billion (up 12% YoY) and EPS of $1.95, slightly missing analyst estimates of $1.97. AWS revenue grew 24% YoY to $35.6...
+2. The company announced plans to increase capital expenditures by about 50% to $200 billion in 2026, focusing on AI, chips, robotics, and low earth orbit (LEO) satellites. (Sources: 5, 6, 13, 15)
+3. Amazon LEO Satellite Network has launched 180 satellites to date, with more than 20 launches planned in 2026 and over 30 in 2027. Commercial rollout is expected later in 2026, with several enterprise...
+4. Amazon is expanding delivery speeds, with U.S. Prime members receiving over 8 billion items same or next day in 2025, a 30%+ increase year over year. They are also testing a 30-minute delivery...
+5. The company announced layoffs totaling about 30,000 roles by May 2026 as part of restructuring to reduce bureaucracy and increase efficiency, while investing heavily in AI and AWS data centers....
+6. Amazon's recent roadmap and infrastructure projects for AI agents, based on the last 30 days and recent updates through early 2026, include:
+
+🔗 Top links (read max 3):
+- Amazon (AMZN) Q4 2025 Earnings Call Transcript | The Motley Fool — https://www.fool.com/earnings/call-transcripts/2026/02/05/amazon-amzn-q4-2025-earnings-call-transcript/
+- Amazon.com (AMZN) Earnings Date and Reports 2026 $AMZN — https://www.marketbeat.com/stocks/NASDAQ/AMZN/earnings/
+- Amazon (AMZN) Earnings: Latest Report, Earnings Call & Financials — https://public.com/stocks/amzn/earnings
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why Amazon now?' points from the bullets
+- Prepare: 2 coding patterns + 1 system-design topic
