@@ -45,3 +45,4 @@ job_applications.json
 *.txt
 interview_prep_docs
 *.csv
+credentials.json
