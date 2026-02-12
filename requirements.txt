@@ -1,7 +1,7 @@
 python-dotenv
 linkup-sdk
+requests
 # Optional (use if you add web requests or testing tools):
-# requests
 # pytest
 
 # Install with:
