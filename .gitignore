@@ -41,11 +41,7 @@ pip-delete-this-directory.txt
 # Other
 *.log
 job_applications.json
-
-.env
+*.json
 *.txt
-output/
-credentials.json
-token.json
-token_calendar.json
-token_gmail.json
+interview_prep_docs
+*.csv
