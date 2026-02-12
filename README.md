@@ -59,6 +59,35 @@ To automatically read emails and generate Google Calendar events, you need the f
     ⁠
    This script reads your emails using the Llama 3 model via Ollama, extracts event information, and automatically creates corresponding Google Calendar events.
 
+# 🌐 Web UI (React + FastAPI)
+
+A modern minimal web dashboard is included.
+
+## ▶️ How to Run the UI
+
+### 1️⃣ Start Backend (FastAPI)
+
+From project root:
+
+```bash
+venv\Scripts\activate   # Windows
+# OR
+source venv/bin/activate  # Mac/Linux
+
+uvicorn main:app --reload --port 8000
+
+Open a new terminal and run:
+
+cd JIA_ui
+npm install
+npm run dev
+
+
+Frontend runs at:
+
+http://localhost:5173
+
+
 ---
 
 ## 🏗️ Architecture
