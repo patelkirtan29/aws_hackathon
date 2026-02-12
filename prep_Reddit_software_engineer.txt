@@ -1,0 +1,41 @@
+RECENT JOB BRIEF — Reddit (software engineer)
+Generated: 2026-02-11T22:02:05.898703
+
+✅ Recent highlights (min reading, max signal):
+- No highlights found (Linkup returned limited data).
+
+🔗 Top links (read max 3):
+- Google News — https://www.google.com/search?q=Reddit+latest+news&tbm=nws
+- LinkedIn Jobs — https://www.linkedin.com/jobs/search/?keywords=Reddit+software+engineer
+- Indeed — https://www.indeed.com/jobs?q=Reddit+software+engineer
+
+🧑‍💻 Recent job postings (last 7 days bias; max 5):
+- None found (try role synonyms like 'SWE' / 'Software Engineer').
+
+🧠 Past interview questions (from your CSV; auto-fetched if missing):
+- No questions found.
+
+🧠 Interview themes (from public sources):
+• Coding topics: dp, arrays, strings, hashmap, stack/queue, binary search, trees, graphs
+• System design: queues/streams, auth
+• Behavioral themes: collaboration, execution, ownership
+
+📅 7-day prep plan (auto-generated):
+• Day 1: dp + arrays (2 medium problems)
+• Day 2: strings + hashmap (2 medium problems)
+• Day 3: stack/queue (2 medium) + review mistakes
+• Day 4: binary search (2 medium) + 1 timed set (45–60 min)
+• Day 5: System Design — queues/streams + auth (write 1 full design doc)
+• Day 6: System Design — caching + API + data model + scaling checklist
+• Day 7: Mock interview (coding + behavioral). Behavioral: collaboration, execution, ownership
+
+📅 30-day study plan (role-specific):
+• Week 1: Arrays, Strings, Hashmaps (15 problems)
+• Week 2: Trees, Graphs, DP (15 problems)
+• Week 3: System Design fundamentals + caching + scaling
+• Week 4: Timed mocks (coding + behavioral)
+
+🔗 Best interview links (read 2–3):
+• LeetCode Discuss — https://leetcode.com/discuss/?query=Reddit+software+engineer
+• GeeksforGeeks — https://www.google.com/search?q=site:geeksforgeeks.org+Reddit+software+engineer+interview+questions
+• System Design Primer (GitHub) — https://github.com/donnemartin/system-design-primer
