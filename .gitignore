@@ -43,6 +43,6 @@ pip-delete-this-directory.txt
 job_applications.json
 *.json
 *.txt
-interview_prep_docs
+interview_prep_docs/
 *.csv
 credentials.json
