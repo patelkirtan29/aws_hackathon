@@ -324,4 +324,12 @@ For questions or feedback, please open an issue on GitHub.
 
 ---
 
+## Demo Videos
+
+- **Linkedin Connections CLI demo** — Watch the feature walkthrough: https://drive.google.com/file/d/14urTEl-rlFhKgtHoIe6mQrwn5YrlHf1m/view
+- **Calendar Invite CLI demo** — Watch the feature walkthrough: https://drive.google.com/file/d/19oh5TgXhd0YVPzWp9v8R3Eifmt2UreJY/view
+- **Job research and Email scan UI demo** — Watch the feature walkthrough: https://drive.google.com/file/d/1h6eV_fHLAlD0FLyw56byrdQY6NNh5vj3/view
+
+---
+
 **Built with ❤️ to make job searching less stressful and more strategic.**
