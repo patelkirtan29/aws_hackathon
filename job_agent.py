@@ -1,74 +1,32 @@
 # job_agent.py
 from __future__ import annotations
 
+import re
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from linkup_job import linkup_search
 from linkedin_referrals import find_referrals
 from storage import load_db, save_db, upsert_application, add_referrals, export_csv
 
-# Google Contacts (OAuth) — optional
+# Google Contacts (OAuth)
 from contacts_google import contacts_matching_company
 
-# Gmail scan
+# Gmail → Interview extraction → Calendar push
 from gmail_reader import fetch_recent_messages
-
-# Interview parsing
 from interview_parser import parse_interview_details
 
-# Calendar push (your file is named calender_push.py)
+# ✅ IMPORTANT: file name is calendar_push.py
 from calendar_push import create_event
 
-
-# Optional helpers from storage.py (if present)
+# Optional storage helpers (if you added them to storage.py)
 try:
     from storage import has_scheduled_interview, add_interview_event
 except Exception:
     has_scheduled_interview = None
     add_interview_event = None
-
-
-# ---------------------------
-# Small helpers
-# ---------------------------
-def _safe_filename(s: str) -> str:
-    s = (s or "").strip().replace(" ", "_").replace("/", "_")
-    return "".join(c for c in s if c.isalnum() or c in ("_", "-", "."))[:80]
-
-
-def _first_line(s: str, max_len: int = 140) -> str:
-    s = (s or "").strip().split("\n")[0].strip()
-    if len(s) > max_len:
-        s = s[:max_len].rsplit(" ", 1)[0] + "..."
-    return s
-
-
-def _guess_company_with_linkup(subject: str, sender: str) -> str:
-    """
-    Best-effort: identify company when parser says Unknown.
-    LIMITED + optional so you don't burn API calls.
-    """
-    q = (
-        'Identify the COMPANY NAME for this recruiting/interview email. '
-        f'Subject: "{subject}". Sender: "{sender}". '
-        "Return only the company name (1-3 words)."
-    )
-    resp = linkup_search(q)
-
-    ans = ""
-    if isinstance(resp, dict):
-        ans = (resp.get("answer") or "").strip()
-    else:
-        ans = (getattr(resp, "answer", "") or "").strip()
-
-    ans = _first_line(ans, max_len=40)
-    # simple cleanup
-    ans = ans.strip(" .:-")
-    if not ans or len(ans) > 40:
-        return "Unknown"
-    return ans
 
 
 class JobIntelligenceAgent:
@@ -80,11 +38,11 @@ class JobIntelligenceAgent:
     # LINKUP: recent + applicant-focused queries
     # ---------------------------
     def build_queries(self, company: str, role: str) -> List[str]:
-        # keep short, "recent bias" but readable
+        recent = '"last 30 days" OR "last month" OR 2026 OR 2025 OR latest OR recent'
         return [
-            f"{company} latest announcements launches earnings hiring last 30 days",
-            f"{company} current projects roadmap AI initiatives last 30 days",
-            f"{company} {role} interview process rounds coding system design 2025 2026",
+            f'{company} announcements earnings launches hiring {recent}',
+            f'{company} projects roadmap AI agents infrastructure {recent}',
+            f'{company} {role} interview process rounds coding system design behavioral {recent}',
         ]
 
     def bullets_from_answer(self, answer_text: str, max_bullets: int = 6) -> List[str]:
@@ -109,8 +67,9 @@ class JobIntelligenceAgent:
                 continue
 
             clean = " ".join(clean.split())
-            if len(clean) > 190:
-                clean = clean[:190].rsplit(" ", 1)[0].rstrip() + "..."
+
+            if len(clean) > 200:
+                clean = clean[:200].rsplit(" ", 1)[0].rstrip() + "..."
 
             bullets.append(clean)
             if len(bullets) >= max_bullets:
@@ -118,8 +77,8 @@ class JobIntelligenceAgent:
 
         if not bullets:
             trimmed = " ".join(answer_text.split())
-            if len(trimmed) > 190:
-                trimmed = trimmed[:190].rsplit(" ", 1)[0].rstrip() + "..."
+            if len(trimmed) > 200:
+                trimmed = trimmed[:200].rsplit(" ", 1)[0].rstrip() + "..."
             bullets = [trimmed]
 
         return bullets
@@ -142,7 +101,7 @@ class JobIntelligenceAgent:
 
         # pydantic / object response
         srcs = getattr(resp, "sources", None) or []
-        out: List[Dict[str, str]] = []
+        out = []
         for s in srcs:
             out.append(
                 {
@@ -154,25 +113,21 @@ class JobIntelligenceAgent:
         return out
 
     def pick_top_sources(self, sources: List[Dict[str, str]], max_sources: int = 3) -> List[Dict[str, str]]:
-        # remove noisy aggregators
         filtered = []
         for s in sources:
-            url = (s.get("url") or "")
+            url = s.get("url", "")
             if "news.google.com" in url:
-                continue
-            if not url.startswith("http"):
                 continue
             filtered.append(s)
         return filtered[:max_sources]
 
     # ---------------------------
-    # Job postings biased to last 7 days
+    # NEW: Recent job postings (last 7 days bias; Linkup)
     # ---------------------------
     def fetch_recent_job_postings(self, company: str, role: str, max_posts: int = 5) -> List[Dict[str, str]]:
         query = (
-            f'{company} "{role}" (job OR opening OR "job posting") '
-            f'("last 7 days" OR "this week" OR "posted" OR 2026 OR 2025) '
-            f'(site:jobs OR site:careers OR site:greenhouse.io OR site:lever.co OR site:myworkdayjobs.com OR site:workdayjobs.com)'
+            f'{company} "{role}" (job OR opening OR "job posting") ("last 7 days" OR "this week" OR 2026 OR 2025) '
+            f'(site:careers OR site:jobs OR site:greenhouse.io OR site:lever.co OR site:workdayjobs.com OR site:myworkdayjobs.com)'
         )
 
         resp = linkup_search(query)
@@ -182,7 +137,7 @@ class JobIntelligenceAgent:
         seen = set()
 
         for s in sources:
-            url = (s.get("url") or "").strip()
+            url = s.get("url", "")
             if not url or url in seen:
                 continue
 
@@ -205,13 +160,128 @@ class JobIntelligenceAgent:
 
         return postings
 
+    # ---------------------------
+    # Interview themes extraction (public sources via Linkup)
+    # ---------------------------
+    CODING_TOPIC_MAP = {
+        "arrays": [r"\barray\b", r"\btwo pointer", r"\bsliding window\b", r"\bprefix sum\b", r"\bsubarray\b"],
+        "strings": [r"\bstring\b", r"\banagram\b", r"\bsubstring\b", r"\bpalindrome\b"],
+        "hashmap": [r"\bhash\b", r"\bhashmap\b", r"\bdictionary\b", r"\bset\b"],
+        "stack/queue": [r"\bstack\b", r"\bqueue\b", r"\bmonotonic\b"],
+        "heap": [r"\bheap\b", r"\bpriority queue\b"],
+        "binary search": [r"\bbinary search\b", r"\blower bound\b", r"\bupper bound\b"],
+        "trees": [r"\btree\b", r"\bbinary tree\b", r"\bbst\b", r"\btraversal\b"],
+        "graphs": [r"\bgraph\b", r"\bdfs\b", r"\bbfs\b", r"\bdijkstra\b", r"\btopological\b"],
+        "dp": [r"\bdp\b", r"\bdynamic programming\b", r"\bknapsack\b"],
+        "greedy": [r"\bgreedy\b"],
+        "backtracking": [r"\bbacktracking\b", r"\bpermutation\b", r"\bcombination\b"],
+    }
+
+    SYSTEM_DESIGN_TOPICS = {
+        "rate limiter": [r"rate limit", r"token bucket", r"leaky bucket"],
+        "caching": [r"\bcache\b", r"redis", r"memcached"],
+        "queues/streams": [r"kafka", r"pubsub", r"pub/sub", r"queue", r"stream"],
+        "db design": [r"schema", r"index", r"partition", r"shard", r"replica"],
+        "storage/cdn": [r"\bcdn\b", r"object storage", r"\bs3\b", r"blob storage"],
+        "auth": [r"oauth", r"authentication", r"authorization", r"jwt"],
+        "observability": [r"logging", r"metrics", r"tracing", r"monitoring"],
+    }
+
+    BEHAVIORAL_THEMES = {
+        "ownership": [r"ownership", r"end[- ]to[- ]end", r"\bowned\b"],
+        "collaboration": [r"cross[- ]functional", r"collaborat", r"stakeholder"],
+        "ambiguity": [r"ambiguous", r"unclear", r"no direction", r"figured out"],
+        "conflict": [r"conflict", r"disagree", r"pushback"],
+        "execution": [r"delivered", r"shipped", r"deadline", r"trade[- ]off"],
+        "failure/learning": [r"failed", r"mistake", r"learned", r"postmortem"],
+    }
+
+    def _count_topics(self, text: str, topic_map: dict) -> Counter:
+        t = (text or "").lower()
+        counts = Counter()
+        for topic, patterns in topic_map.items():
+            for pat in patterns:
+                if re.search(pat, t, flags=re.IGNORECASE):
+                    counts[topic] += 1
+        return counts
+
+    def _combine_text_from_sources(self, answer: str, sources: List[Dict[str, str]]) -> str:
+        parts = [answer or ""]
+        for s in sources or []:
+            parts.append(s.get("title", "") or "")
+            parts.append(s.get("snippet", "") or "")
+            parts.append(s.get("url", "") or "")
+        return "\n".join(parts)
+
+    def fetch_interview_question_themes(self, company: str, role: str) -> Dict[str, Any]:
+        q_role = role.replace("/", " ")
+        queries = [
+            f'{company} {q_role} interview questions leetcode phone screen',
+            f'{company} {q_role} technical interview questions data structures algorithms',
+            f'{company} {q_role} system design interview questions',
+            f'{company} {q_role} recruiter screen behavioral interview questions',
+        ]
+
+        all_sources: List[Dict[str, str]] = []
+        all_text = ""
+
+        for q in queries:
+            resp = linkup_search(q)
+            if isinstance(resp, dict):
+                answer = resp.get("answer") or ""
+            else:
+                answer = getattr(resp, "answer", "") or ""
+
+            sources = self.normalize_sources(resp)
+            all_sources.extend(self.pick_top_sources(sources, max_sources=3))
+            all_text += "\n" + self._combine_text_from_sources(answer, sources)
+
+        coding = self._count_topics(all_text, self.CODING_TOPIC_MAP)
+        sysd = self._count_topics(all_text, self.SYSTEM_DESIGN_TOPICS)
+        beh = self._count_topics(all_text, self.BEHAVIORAL_THEMES)
+
+        return {
+            "queries": queries,
+            "coding_topics": [t for t, _ in coding.most_common(8)],
+            "system_design_topics": [t for t, _ in sysd.most_common(5)],
+            "behavioral_themes": [t for t, _ in beh.most_common(5)],
+            "top_links": all_sources[:5],
+        }
+
+    def build_7_day_prep_plan(self, themes: Dict[str, Any]) -> List[str]:
+        coding = themes.get("coding_topics") or []
+        sysd = themes.get("system_design_topics") or []
+        beh = themes.get("behavioral_themes") or []
+
+        c = (coding + ["arrays", "strings", "hashmap", "trees", "graphs", "dp"])[:6]
+        s = (sysd + ["caching", "db design", "queues/streams"])[:3]
+        b = (beh + ["ownership", "collaboration", "ambiguity"])[:3]
+
+        return [
+            f"Day 1: {c[0]} + {c[1]} (2 medium problems)",
+            f"Day 2: {c[2]} + {c[3]} (2 medium problems)",
+            f"Day 3: {c[4]} (2 medium) + review mistakes",
+            f"Day 4: {c[5]} (2 medium) + 1 timed set (45–60 min)",
+            f"Day 5: System Design — {s[0]} + {s[1]} (write 1 full design doc)",
+            f"Day 6: System Design — {s[2]} + API + data model + scaling checklist",
+            f"Day 7: Mock interview (coding + behavioral). Behavioral: {', '.join(b)}",
+        ]
+
+    # ---------------------------
+    # Run Linkup research bundle (3 queries) + jobs + themes + plan
+    # ---------------------------
     def run_research(self, company: str, role: str) -> Dict[str, Any]:
         queries = self.build_queries(company, role)
         results: List[Dict[str, Any]] = []
 
         for q in queries:
-            resp = linkup_search(q)  # IMPORTANT: no kwargs
-            answer = resp.get("answer", "") if isinstance(resp, dict) else (getattr(resp, "answer", "") or "")
+            resp = linkup_search(q)
+
+            if isinstance(resp, dict):
+                answer = resp.get("answer") or ""
+            else:
+                answer = getattr(resp, "answer", "") or ""
+
             sources = self.normalize_sources(resp)
 
             results.append(
@@ -223,9 +293,22 @@ class JobIntelligenceAgent:
             )
 
         recent_jobs = self.fetch_recent_job_postings(company, role, max_posts=5)
+        themes = self.fetch_interview_question_themes(company, role)
+        prep_plan = self.build_7_day_prep_plan(themes)
 
-        return {"company": company, "role": role, "results": results, "recent_jobs": recent_jobs}
+        return {
+            "company": company,
+            "role": role,
+            "queries": queries,
+            "results": results,
+            "recent_jobs": recent_jobs,
+            "themes": themes,
+            "prep_plan": prep_plan,
+        }
 
+    # ---------------------------
+    # Candidate brief (bullets + top links + jobs + themes + plan)
+    # ---------------------------
     def format_candidate_brief(self, bundle: Dict[str, Any]) -> str:
         company = bundle["company"]
         role = bundle["role"]
@@ -264,6 +347,7 @@ class JobIntelligenceAgent:
         lines.append(f"RECENT JOB BRIEF — {company} ({role})")
         lines.append(f"Generated: {datetime.now().isoformat()}")
         lines.append("")
+
         lines.append("✅ Recent highlights (min reading, max signal):")
         if final_bullets:
             for i, b in enumerate(final_bullets, 1):
@@ -286,34 +370,64 @@ class JobIntelligenceAgent:
             for j in recent_jobs[:5]:
                 lines.append(f"- {j.get('title','Job posting')} — {j.get('url','')}")
         else:
-            lines.append("- None found (try role wording: 'SWE' vs 'Software Engineer').")
+            lines.append("- None found (try 'SWE' vs 'Software Engineer', or add location).")
+
+        themes = bundle.get("themes") or {}
+        prep_plan = bundle.get("prep_plan") or []
 
         lines.append("")
-        lines.append("🎯 Candidate next steps (10 minutes):")
-        lines.append("- Read the 3 links above")
-        lines.append(f"- Write 2 'Why {company} now?' points from the highlights")
-        lines.append("- Prepare: 2 coding patterns + 1 system-design topic")
+        lines.append("🧠 Interview themes (from public sources):")
+        ct = themes.get("coding_topics") or []
+        st = themes.get("system_design_topics") or []
+        bt = themes.get("behavioral_themes") or []
+        lines.append(f"- Coding topics: {', '.join(ct[:8]) if ct else '—'}")
+        lines.append(f"- System design: {', '.join(st[:5]) if st else '—'}")
+        lines.append(f"- Behavioral themes: {', '.join(bt[:5]) if bt else '—'}")
+
+        lines.append("")
+        lines.append("📅 7-day prep plan (auto-generated):")
+        if prep_plan:
+            for p in prep_plan:
+                lines.append(f"- {p}")
+        else:
+            lines.append("- (No plan generated)")
+
+        lines.append("")
+        lines.append("🔗 Best interview links (read 2–3):")
+        top_links = themes.get("top_links") or []
+        if top_links:
+            used = set()
+            for s in top_links[:5]:
+                url = s.get("url", "")
+                if not url or url in used:
+                    continue
+                used.add(url)
+                lines.append(f"- {s.get('title','Source')} — {url}")
+        else:
+            lines.append("- None found.")
 
         return "\n".join(lines)
 
     # ---------------------------
     # MODE 1: Job research pipeline
     # ---------------------------
-    def process_job(self, company: str, role: str) -> Dict[str, Any]:
+    def process_job(self, company: str, role: str):
         print("\n" + "=" * 70)
         print("🎯 JOB APPLICATION PROCESSING")
         print("=" * 70)
         print(f"Company: {company}")
         print(f"Role: {role}\n")
 
-        print("1️⃣  Running Linkup research (recent-focused, candidate-friendly)...")
+        print("1️⃣  Running Linkup research (recent-focused + interview themes)...")
         bundle = self.run_research(company, role)
         print("   ✓ Research complete\n")
 
-        print("2️⃣  Writing candidate brief (bullets + last-7-days postings)...")
+        print("2️⃣  Writing candidate brief (highlights + postings + themes + plan)...")
         brief = self.format_candidate_brief(bundle)
 
-        doc_path = self.prep_docs_dir / f"prep_{_safe_filename(company)}_{_safe_filename(role)}.txt"
+        safe_company = company.strip().replace(" ", "_")
+        safe_role = role.strip().replace(" ", "_").replace("/", "_")
+        doc_path = self.prep_docs_dir / f"prep_{safe_company}_{safe_role}.txt"
         doc_path.write_text(brief)
         print(f"   ✓ Created: {doc_path}\n")
 
@@ -325,7 +439,7 @@ class JobIntelligenceAgent:
             print(f"   ⚠ Contacts not available: {e}")
 
         if known_people:
-            print("   ✅ Found people you already know (top 5):")
+            print("   ✅ Found people you already know (ranked by company/email domain match):")
             for p in known_people:
                 print(f"   - {p['name']} — {p['email']}")
         else:
@@ -333,6 +447,7 @@ class JobIntelligenceAgent:
 
         print("\n4️⃣  Finding referral targets (LinkedIn via Linkup)...")
         candidates = find_referrals(company, role, max_people=8)
+
         if candidates:
             print("   Top referral targets:")
             for c in candidates[:5]:
@@ -342,17 +457,13 @@ class JobIntelligenceAgent:
         else:
             print("   - No referral profiles found (try another company/role).")
 
-        # Persist to local DB (JSON) and CSV
         db = load_db()
         app = upsert_application(db, company, role)
-
-        # IMPORTANT: your storage/export_csv must include these columns or it will crash.
-        # If storage.py doesn't include notes_file in fieldnames, either add it there
-        # or comment out this line.
         app["notes_file"] = str(doc_path)
-
         app["internal_contacts"] = known_people
         app["recent_job_postings"] = bundle.get("recent_jobs", [])
+        app["themes"] = bundle.get("themes", {})
+        app["prep_plan"] = bundle.get("prep_plan", [])
 
         added = add_referrals(app, candidates)
 
@@ -375,9 +486,9 @@ class JobIntelligenceAgent:
         }
 
     # ---------------------------
-    # MODE 2: Inbox scan → categorize → optionally push to calendar
+    # MODE 2: Inbox → Calendar (uses your parser + schedules only when start_iso exists)
     # ---------------------------
-    def scan_inbox_and_push_interviews(self, max_emails: int = 50, dry_run: bool = True) -> Dict[str, Any]:
+    def scan_inbox_and_push_interviews(self, max_emails: int = 50, dry_run: bool = False):
         print("\n" + "=" * 70)
         print("📩 INBOX SCAN → SUMMARY (Interview / Assessment)")
         print("=" * 70)
@@ -390,31 +501,18 @@ class JobIntelligenceAgent:
             '"phone screen" OR "technical screen" OR "final round" OR onsite OR '
             '(interview OR recruiter OR hiring OR "hiring manager" OR "talent acquisition") OR '
             '(availability OR schedule OR scheduling OR reschedule OR "calendar invite") OR '
-            '(assessment OR "online assessment" OR oa OR hackerrank OR codility OR karat)'
+            '(assessment OR "online assessment" OR oa OR hackerrank OR codility OR karat OR codesignal OR hirevue)'
             ') '
-            '-subject:(webinar OR digest OR newsletter OR shuttle OR rent OR alumni OR subscription OR cleaning OR loan OR amortization OR netbanking) '
+            '-subject:(webinar OR digest OR newsletter OR shuttle OR rent OR alumni OR subscription OR cleaning OR loan OR netbanking OR downtime) '
             '-from:(no-reply OR noreply)'
         )
 
         emails = fetch_recent_messages(max_results=max_emails, query=gmail_query)
         print(f"Fetched {len(emails)} emails.\n")
 
-        # Optional: resolve Unknown company via Linkup (limit)
-        RESOLVE_UNKNOWN_COMPANY = False  # set True if you want it
-        MAX_RESOLVES = 5
-        resolved = 0
-
-        stage_counts: Dict[str, int] = {
-            "Assessment": 0,
-            "Phone Screen": 0,
-            "Technical Interview": 0,
-            "Onsite / Final": 0,
-            "Recruiter / Scheduling": 0,
-            "Unclassified": 0,
-        }
-
-        action_needed: List[Dict[str, Any]] = []
-        calendar_ready: List[Dict[str, Any]] = []
+        stage_counts: Dict[str, int] = {}
+        action_needed = []
+        calendar_ready = []
 
         db = load_db()
         created = 0
@@ -425,31 +523,23 @@ class JobIntelligenceAgent:
                 continue
 
             stage = parsed.get("stage") or "Unclassified"
+            company = parsed.get("company") or "Unknown"
+            subject = (e.get("subject") or "").strip()
+
             stage_counts[stage] = stage_counts.get(stage, 0) + 1
-
-            subject = e.get("subject", "(no subject)")
-            sender = e.get("from", "")
-            company = parsed.get("company", "Unknown")
-
-            if RESOLVE_UNKNOWN_COMPANY and company == "Unknown" and resolved < MAX_RESOLVES:
-                guessed = _guess_company_with_linkup(subject, sender)
-                if guessed and guessed != "Unknown":
-                    company = guessed
-                    resolved += 1
 
             item = {
                 "stage": stage,
                 "company": company,
                 "subject": subject,
-                "from": sender,
-                "due_hint": parsed.get("due_hint", ""),
                 "start_iso": parsed.get("start_iso"),
                 "meeting_link": parsed.get("meeting_link") or "",
                 "message_id": e.get("message_id"),
+                "from": e.get("from") or "",
+                "snippet": e.get("snippet") or "",
             }
 
-            # calendar-ready if it has a datetime OR meeting link
-            if item["start_iso"] or item["meeting_link"]:
+            if item["start_iso"]:
                 calendar_ready.append(item)
             else:
                 action_needed.append(item)
@@ -457,40 +547,39 @@ class JobIntelligenceAgent:
         # Print summary
         print("📊 INTERVIEW SUMMARY\n")
         for k in ["Assessment", "Phone Screen", "Technical Interview", "Onsite / Final", "Recruiter / Scheduling", "Unclassified"]:
-            print(f"{k} ({stage_counts.get(k,0)})")
+            print(f"{k} ({stage_counts.get(k, 0)})")
+
         print("\n" + "=" * 70)
 
-        def _print_list(title: str, items: List[Dict[str, Any]], limit: int = 12):
-            print(f"\n{title} (showing up to {limit})")
-            if not items:
-                print("• (none)")
-                return
-            for it in items[:limit]:
-                due = f" — {it['due_hint']}" if it.get("due_hint") else ""
-                when = f" — {it['start_iso']}" if it.get("start_iso") else ""
-                print(f"• [{it['stage']}] {it['company']}: {it['subject']}{due}{when}")
+        print("\n🟡 Action needed / not scheduled yet (showing up to 12)")
+        if action_needed:
+            for it in action_needed[:12]:
+                print(f"• [{it['stage']}] {it['company']}: {it['subject']}")
+        else:
+            print("• (none)")
 
-        _print_list("🟡 Action needed / not scheduled yet", action_needed, limit=12)
-        _print_list("✅ Calendar-ready (can be scheduled)", calendar_ready, limit=12)
+        print("\n✅ Calendar-ready (can be scheduled) (showing up to 12)")
+        if calendar_ready:
+            for it in calendar_ready[:12]:
+                print(f"• [{it['stage']}] {it['company']}: {it['subject']} — {it['start_iso']}")
+        else:
+            print("• (none)")
 
-        # Create events (if not dry-run)
+        # Create events
         if not dry_run and calendar_ready:
             for it in calendar_ready:
-                # require datetime to create an event
-                if not it.get("start_iso"):
-                    continue
-
                 mid = it.get("message_id")
                 if has_scheduled_interview and mid and has_scheduled_interview(db, mid):
                     continue
 
-                title = f"{it['stage']}: {it['company']}"
-                desc = (
-                    f"Company: {it['company']}\n"
-                    f"Stage: {it['stage']}\n"
-                    f"Subject: {it['subject']}\n"
-                    f"From: {it['from']}\n\n"
-                    f"Meeting link: {it.get('meeting_link','')}\n"
+                title = f"{it['stage']}: {it['company']} — {it['subject']}"
+                description = (
+                    f"From: {it.get('from','')}\n"
+                    f"Company: {it.get('company','')}\n"
+                    f"Stage: {it.get('stage','')}\n"
+                    f"Subject: {it.get('subject','')}\n\n"
+                    f"Snippet:\n{it.get('snippet','')}\n\n"
+                    f"Meeting link:\n{it.get('meeting_link','')}\n"
                 ).strip()
 
                 try:
@@ -498,7 +587,7 @@ class JobIntelligenceAgent:
                         title=title,
                         start_iso=it["start_iso"],
                         duration_mins=60,
-                        description=desc,
+                        description=description,
                         location=it.get("meeting_link", ""),
                         calendar_id="primary",
                     )
@@ -506,16 +595,14 @@ class JobIntelligenceAgent:
                     print(f"\n⚠ Failed to create event for: {it['subject']} — {ex}")
                     continue
 
-                app = upsert_application(db, it["company"], "Interview/Assessment")
+                app = upsert_application(db, it.get("company") or "Inbox", it.get("stage") or "Interview")
                 app.setdefault("interviews", [])
 
                 interview_obj = {
                     "message_id": mid,
-                    "subject": it["subject"],
-                    "stage": it["stage"],
-                    "company": it["company"],
-                    "start_iso": it["start_iso"],
-                    "meeting_link": it.get("meeting_link", ""),
+                    "subject": it.get("subject"),
+                    "start_iso": it.get("start_iso"),
+                    "meeting_link": it.get("meeting_link"),
                     "calendar_event_id": ev.get("id"),
                     "calendar_event_link": ev.get("htmlLink"),
                     "created_at": datetime.now().isoformat(),
@@ -535,12 +622,7 @@ class JobIntelligenceAgent:
         print(f"Calendar events created: {created} (dry_run={dry_run})")
         print("=" * 70)
 
-        return {
-            "found_action_needed": len(action_needed),
-            "found_calendar_ready": len(calendar_ready),
-            "created": created,
-            "stage_counts": stage_counts,
-        }
+        return {"created": created, "summary": stage_counts}
 
 
 if __name__ == "__main__":
