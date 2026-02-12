@@ -1,0 +1,14 @@
+company,role,last_updated,notes_file,recent_job_posts_count,referrals_count,known_contacts_count,interviews_scheduled_count
+Microsoft,AI/ML Engineer,2026-02-09T12:51:16.786730,interview_prep_docs/prep_Microsoft.txt,0,0,0,0
+IBM,Software Engineer,2026-02-09T13:23:23.387775,interview_prep_docs/prep_IBM_Software_Engineer.txt,0,0,0,0
+Salesforce,Software Engineer,2026-02-09T13:41:08.405732,interview_prep_docs/prep_Salesforce_Software_Engineer.txt,0,0,0,0
+TCS,Middelware Administrator,2026-02-09T13:43:12.779818,interview_prep_docs/prep_TCS_Middelware_Administrator.txt,0,0,0,0
+Amazon,Software Developer,2026-02-09T14:41:43.952625,interview_prep_docs/prep_Amazon_Software_Developer.txt,2,0,0,0
+TCS,Software Engineer,2026-02-09T15:04:39.424838,interview_prep_docs/prep_TCS_Software_Engineer.txt,5,0,0,0
+Amazon,Software Engineer,2026-02-09T15:10:27.545754,interview_prep_docs/prep_Amazon_Software_Engineer.txt,5,0,0,0
+Apple,Software Engineer,2026-02-11T12:30:21.194611,interview_prep_docs/prep_Apple_Software_Engineer.txt,5,0,0,0
+IBM,AI/ML Engineer,2026-02-11T14:13:59.178625,interview_prep_docs/prep_IBM_AI_ML_Engineer.txt,5,0,0,0
+Deloitte,Software Engineer,2026-02-11T14:41:53.038956,interview_prep_docs/prep_Deloitte_Software_Engineer.txt,5,0,0,0
+TikTok,Software Engineer,2026-02-11T14:52:57.743468,interview_prep_docs/prep_TikTok_Software_Engineer.txt,5,0,0,0
+Google,Software Engineer,2026-02-11T17:47:34.260410,interview_prep_docs/prep_Google_Software_Engineer.txt,5,0,0,0
+Tesla,Software Engineer,2026-02-11T19:06:23.952469,interview_prep_docs/prep_Tesla_Software_Engineer.txt,5,0,0,0

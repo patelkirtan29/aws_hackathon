@@ -1,0 +1,6 @@
+company,role,stage,topic,difficulty,question,source
+TCS,Software Engineer,Coding,Arrays,Easy,Find the second largest element in an array,GeeksforGeeks
+TCS,Software Engineer,Coding,String,Easy,Check if two strings are anagrams,LeetCode Discuss
+TCS,Software Engineer,Assessment,Aptitude,Medium,Time & work / probability basics,InterviewBit
+IBM,AI/ML Engineer,System Design,ML Serving,Hard,Design an inference service with monitoring and rollback,Personal Notes
+IBM,AI/ML Engineer,Coding,DP,Medium,Longest Increasing Subsequence,LeetCode
