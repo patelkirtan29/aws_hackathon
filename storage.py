@@ -48,25 +48,48 @@ def add_referrals(app_entry, candidates):
         added += 1
     return added
 
-def export_csv(rows):
-    # Flatten key fields for spreadsheet view
-    fields = ["company", "role", "created_at", "referral_count", "referral_urls", "referral_reasons"]
+def export_csv(db, csv_path="job_applications.csv"):
+    """
+    Export a clean, candidate-friendly CSV.
+    Avoid nested JSON fields (referrals/interviews/contacts) to prevent schema errors.
+    """
+    import csv
 
-    with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=fields)
+    rows = []
+    for app in db:
+        referrals = app.get("referrals", []) or []
+        interviews = app.get("interviews", []) or []
+        contacts = app.get("internal_contacts", []) or []
+        jobs = app.get("recent_job_postings", []) or []
+
+        rows.append({
+            "company": app.get("company", ""),
+            "role": app.get("role", ""),
+            "last_updated": app.get("last_updated", app.get("created_at", "")),
+            "notes_file": app.get("notes_file", ""),
+            "recent_job_posts_count": len(jobs),
+            "referrals_count": len(referrals),
+            "known_contacts_count": len(contacts),
+            "interviews_scheduled_count": len(interviews),
+        })
+
+    fieldnames = [
+        "company",
+        "role",
+        "last_updated",
+        "notes_file",
+        "recent_job_posts_count",
+        "referrals_count",
+        "known_contacts_count",
+        "interviews_scheduled_count",
+    ]
+
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
         for r in rows:
-            refs = r.get("referral_targets") or []
-            w.writerow({
-                "company": r.get("company", ""),
-                "role": r.get("role", ""),
-                "created_at": r.get("created_at", ""),
-                "notes_file": r.get("notes_file", ""),
-                "referral_count": len(refs),
-                "referral_urls": " | ".join([c.get("linkedin_url","") for c in refs][:10]),
-                "referral_reasons": " | ".join([(x.get("reason","")) for x in refs[:10]]),
+            w.writerow(r)
 
-            })
 def has_scheduled_interview(rows, message_id: str) -> bool:
     for r in rows:
         for ev in r.get("interviews", []):

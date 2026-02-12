@@ -17,10 +17,8 @@ HARD_NEGATIVE_KEYWORDS = [
 # Recruiting anchors (must-have signals)
 # ----------------------------
 ATS_DOMAINS = [
-    "greenhouse.io", "lever.co", "icims.com", "smartrecruiters.com",
-    "myworkdayjobs.com", "successfactors", "taleo.net",
-    # workday variants
-    "workday.com", "workdayjobs.com"
+    "greenhouse.io", "lever.co", "workday", "icims.com", "smartrecruiters.com",
+    "myworkdayjobs.com", "successfactors", "taleo.net"
 ]
 
 ASSESSMENT_PROVIDERS = [
@@ -35,8 +33,8 @@ RECRUITING_STRONG = [
 ]
 
 SCHEDULING_WORDS = [
-    "availability", "schedule", "scheduling", "reschedule",
-    "calendar invite", "invite", "invitation", "confirm"
+    "availability", "schedule", "scheduling", "reschedule", "calendar invite",
+    "invite", "invitation", "confirm"
 ]
 
 ROLE_WORDS = [
@@ -64,9 +62,6 @@ MONTH_MAP = {
     "jul": 7, "aug": 8, "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12
 }
 
-# ----------------------------
-# helpers
-# ----------------------------
 def _from_domain(email_from: str) -> str:
     m = re.search(r"@([A-Za-z0-9\.-]+\.[A-Za-z]{2,})", email_from or "")
     return (m.group(1).lower() if m else "")
@@ -74,15 +69,10 @@ def _from_domain(email_from: str) -> str:
 def _looks_like_job_process(email_from: str, text: str) -> bool:
     dom = _from_domain(email_from)
     t = (text or "").lower()
-
-    # ATS email domains
     if any(d in dom for d in ATS_DOMAINS):
         return True
-
-    # assessment providers
     if any(p in dom for p in ASSESSMENT_PROVIDERS) or any(p in t for p in ASSESSMENT_PROVIDERS):
         return True
-
     return False
 
 def _build_text(email: Dict[str, Any]) -> str:
@@ -116,7 +106,7 @@ def _parse_datetime(text: str) -> Optional[str]:
         t, flags=re.IGNORECASE | re.DOTALL
     )
     if m:
-        mon = m.group(1).lower()[:4]
+        mon = m.group(1).lower()
         day = int(m.group(2))
         hh = int(m.group(3))
         mm = int(m.group(4))
@@ -140,7 +130,7 @@ def _parse_datetime(text: str) -> Optional[str]:
             return None
         return dt.isoformat()
 
-    # 02/10 3:00 PM (MM/DD)
+    # 02/10 3:00 PM
     m = re.search(
         r"\b(\d{1,2})/(\d{1,2})\b.*?\b(\d{1,2}):(\d{2})\s*(am|pm)\b",
         t, flags=re.IGNORECASE | re.DOTALL
@@ -183,6 +173,7 @@ def extract_company(email: Dict[str, Any]) -> str:
         "meta.com": "Meta",
         "apple.com": "Apple",
         "tcs.com": "TCS",
+        "ibm.com": "IBM",
     }
     for k, v in domain_map.items():
         if k in dom:
@@ -195,7 +186,8 @@ def extract_company(email: Dict[str, Any]) -> str:
         if len(cand) <= 35:
             return cand
 
-    for c in ["Amazon", "Google", "Microsoft", "Meta", "Apple", "Tesla", "Cisco", "TCS"]:
+    # fallback known companies
+    for c in ["Amazon", "Google", "Microsoft", "Meta", "Apple", "Tesla", "Cisco", "TCS", "IBM"]:
         if c.lower() in text:
             return c
 
@@ -222,28 +214,24 @@ def _confidence_score(text: str, email_from: str) -> int:
     t = text.lower()
     dom = _from_domain(email_from)
 
-    # hard negatives kill it immediately
+    # hard negatives kill it
     if any(k in t for k in HARD_NEGATIVE_KEYWORDS):
         return -999
 
     score = 0
 
-    # ATS domains
-    if any(d in dom for d in ATS_DOMAINS) or any(d in t for d in ATS_DOMAINS):
-        score += 4
+    if any(d in t for d in ATS_DOMAINS) or any(d in dom for d in ATS_DOMAINS):
+        score += 3
 
-    # assessment providers
-    if any(p in dom for p in ASSESSMENT_PROVIDERS) or any(p in t for p in ASSESSMENT_PROVIDERS):
-        score += 4
+    if any(p in t for p in ASSESSMENT_PROVIDERS) or any(p in dom for p in ASSESSMENT_PROVIDERS):
+        score += 3
 
-    # strong recruiting phrases (count lightly)
+    # strong recruiting phrases (half-weight so it doesn't spike too hard)
     score += sum(1 for k in RECRUITING_STRONG if k in t) // 2
 
-    # role words help avoid random “schedule”
     if any(r in t for r in ROLE_WORDS):
         score += 1
 
-    # meeting links or time are strong
     if _find_meeting_link(text):
         score += 3
     if _parse_datetime(text):
@@ -263,11 +251,16 @@ def parse_interview_details(email: Dict[str, Any]) -> Dict[str, Any]:
     start_iso = _parse_datetime(text)
     stage = classify_stage(text)
     company = extract_company(email)
-    due_hint = extract_due_date_hint(text)
 
-    # ✅ HARD GATE: if company is Unknown, only keep it if it's ATS/provider-based
+    # HARD GATE:
+    # Must have either:
+    # - known company, OR
+    # - ATS domain, OR
+    # - assessment provider
     if company == "Unknown" and not _looks_like_job_process(email_from, text):
         return {"is_interview": False}
+
+    due_hint = extract_due_date_hint(text)
 
     return {
         "is_interview": True,
@@ -275,7 +268,5 @@ def parse_interview_details(email: Dict[str, Any]) -> Dict[str, Any]:
         "company": company,
         "due_hint": due_hint,
         "start_iso": start_iso,
-        "meeting_link": meeting_link,
-        "score": score,
+        "meeting_link": meeting_link
     }
-

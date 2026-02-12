@@ -1,0 +1,28 @@
+RECENT JOB BRIEF — Tesla (Software Engineer)
+Generated: 2026-02-11T19:05:56.643101
+
+✅ Recent highlights (min reading, max signal):
+1. Tesla's most recent earnings announcement was on January 28, 2026, reporting Q4 2025 results with an EPS of $0.50, beating estimates. The company reported a decline in vehicle deliveries for 2025 but...
+2. Tesla's recent AI agents infrastructure roadmap and related developments from the last 30 days to early 2026 include:
+3. Tesla is intensifying its AI push in 2026, focusing on custom silicon (AI chips from AI4 to AI7), the reboot of the Dojo supercomputer, and scaling AI infrastructure to support robotaxi and Optimus...
+4. AI5 chip limited production starts in 2026, with high-volume manufacturing expected in 2027; AI6 and AI7 chips are planned for later years, with AI7 targeting space-based AI compute. (Sources 2, 7,...
+5. Tesla plans massive capital expenditures exceeding $20 billion in 2026, funding six factories including the Optimus factory, AI compute infrastructure, and robotaxi fleet expansion. (Sources 5, 6, 19)
+6. The robotaxi service aims for widespread U.S. deployment by the end of 2026, targeting half the U.S. population coverage by end of 2025 and scaling thereafter. (Sources 1, 12, 16)
+
+🔗 Top links (read max 3):
+- Tesla (TSLA) Earnings Date and Reports 2026 $TSLA — https://www.marketbeat.com/stocks/NASDAQ/TSLA/earnings/
+- Tesla (TSLA) Q4 2025 earnings — https://www.cnbc.com/2026/01/28/tesla-tsla-2025-q4-earnings.html
+- Tesla (TSLA) Earnings: Latest Report, Earnings Call & Financials — https://public.com/stocks/tsla/earnings
+
+🧑‍💻 Recent job postings (last 7 days bias; max 5):
+- Internship, Software Engineering, Recruiting (Summer 2025) at Tesla - EV.Careers — https://ev.careers/jobs/111894012-internship-software-engineering-recruiting-summer-2025
+- Internship, Software Engineer, Service Engineering (Summer 2026) at Tesla - EV.Careers — https://ev.careers/jobs/193073675-internship-software-engineer-service-engineering-summer-2026
+- Internship, Software Engineer, Information Security (Winter/Spring 2026) at Tesla - EV.Careers — https://ev.careers/jobs/169212011-internship-software-engineer-information-security-winter-spring-2026
+- Internship, Software Controls Engineer, Optimus (Fall 2025) at Tesla - EV.Careers — https://ev.careers/jobs/128553695-internship-software-controls-engineer-optimus-fall-2025
+- Internship, Software Engineer, Data Platforms (Fall 2025) at Tesla - EV.Careers — https://ev.careers/jobs/127960305-internship-software-engineer-data-platforms-fall-2025
+
+🧠 Past interview questions (from your CSV; auto-fetched if missing):
+- [Mixed] Mixed (Unknown): Phone interviews reviewing online assessment questions plus additional LeetCode problems, SQL, PHP, and questions about your previous work experience. 2026-02-11T18:57:53.809032 — Linkup (public sources)
+- [Mixed] Mixed (Unknown): Onsite interviews with 3-5 rounds (each ~45-60 minutes) including live coding (medium to hard LeetCode problems), system design, domain-specific questions, and behavioral... 2026-02-11T18:57:53.809049 — Linkup (public sources)
+- [Mixed] Mixed (Unknown): Knowledge in linear algebra, geometry, C++, and OOP may be required depending on the role. 2026-02-11T18:57:53.809057 — Linkup (public sources)
+- [Mixed] Mixed (Unknown): Design Bounded Blocking Queue (Problem 1188) 2026-02-11T18:57:53.809069 — Linkup (public sources)

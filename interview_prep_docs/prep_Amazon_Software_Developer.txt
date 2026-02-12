@@ -1,20 +1,24 @@
 RECENT JOB BRIEF — Amazon (Software Developer)
-Generated: 2026-02-09T14:41:15.479914
+Generated: 2026-02-09T16:39:45.220705
 
 ✅ Recent highlights (min reading, max signal):
-1. Amazon reported Q4 2025 earnings on February 5, 2026, with revenue of $213.4 billion (up 12% YoY) and EPS of $1.95, slightly missing analyst estimates of $1.97. AWS revenue grew 24% YoY to $35.6...
-2. The company announced plans to increase capital expenditures by about 50% to $200 billion in 2026, focusing on AI, chips, robotics, and low earth orbit (LEO) satellites. (Sources: 5, 6, 13, 15)
-3. Amazon LEO Satellite Network has launched 180 satellites to date, with more than 20 launches planned in 2026 and over 30 in 2027. Commercial rollout is expected later in 2026, with several enterprise...
-4. Amazon is expanding delivery speeds, with U.S. Prime members receiving over 8 billion items same or next day in 2025, a 30%+ increase year over year. They are also testing a 30-minute delivery...
-5. The company announced layoffs totaling about 30,000 roles by May 2026 as part of restructuring to reduce bureaucracy and increase efficiency, while investing heavily in AI and AWS data centers....
-6. Amazon's recent roadmap and infrastructure projects for AI agents, based on the last 30 days and recent updates through early 2026, include:
+1. Amazon reported Q4 2025 earnings on February 5, 2026, with revenue of $213.4 billion (up 12% YoY) and EPS of $1.95, slightly missing estimates. AWS revenue grew 24% YoY to $35.6 billion, and...
+2. The company plans to invest about $200 billion in capital expenditures in 2026, a roughly 50% increase from 2025, focusing on AI, chips, robotics, and low earth orbit satellites (Amazon LEO)....
+3. Amazon LEO satellite network has launched 180 satellites to date, with more than 20 launches planned in 2026 and over 30 in 2027. Commercial rollout is expected later in 2026, with several enterprise...
+4. Amazon is testing a 30-minute delivery service called Amazon Now in parts of Philadelphia and Seattle. (Source: 5, 10)
+5. The company announced layoffs of about 16,000 corporate roles in early 2026, part of a restructuring plan to reduce bureaucracy and increase efficiency, following 14,000 layoffs in late 2025....
+6. At AWS re:Invent 2025, Amazon announced frontier AI agents capable of autonomous operation for days and expanded the Amazon Nova model family. They also introduced AWS AI Factories to deploy AI...
 
 🔗 Top links (read max 3):
 - Amazon (AMZN) Q4 2025 Earnings Call Transcript | The Motley Fool — https://www.fool.com/earnings/call-transcripts/2026/02/05/amazon-amzn-q4-2025-earnings-call-transcript/
 - Amazon.com (AMZN) Earnings Date and Reports 2026 $AMZN — https://www.marketbeat.com/stocks/NASDAQ/AMZN/earnings/
 - Amazon (AMZN) Earnings: Latest Report, Earnings Call & Financials — https://public.com/stocks/amzn/earnings
 
+🧑‍💻 Recent job postings (last 7 days bias; max 5):
+- Software Development Engineer - Job ID: 3166472 | Amazon.jobs — https://www.amazon.jobs/en/jobs/3166472/software-development-engineer
+- HubSpot Careers | All Openings — https://boards.greenhouse.io/hubspotjobs/jobs/7544178
+
 🎯 Candidate next steps (10 minutes):
 - Read the 3 links above
-- Write 2 'Why Amazon now?' points from the bullets
+- Write 2 'Why Amazon now?' points from the highlights
 - Prepare: 2 coding patterns + 1 system-design topic
