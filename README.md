@@ -41,6 +41,24 @@ Automatically detects and organizes interview emails:
 - 📅 Extracts meeting times
 - 🗓️ Optional Google Calendar integration
 
+
+### Email Parsing & Calendar Event Automation
+
+To automatically read emails and generate Google Calendar events, you need the following additional setup:
+
+1.⁠ ⁠*Install Ollama with Llama 3:* This project uses [Ollama](https://ollama.com/) to run the Llama 3 model locally for parsing email content and extracting event details. Make sure Ollama is installed and the Llama 3 model is pulled:
+   ⁠ bash
+   ollama pull llama3
+    ⁠
+
+2.⁠ ⁠*Google API Credentials:* You need a ⁠ credentials.json ⁠ file from the Google Cloud Console to authenticate with Google APIs (Gmail and Calendar). Place the ⁠ credentials.json ⁠ file in the project root directory. To obtain it, create a project in the [Google Cloud Console](https://console.cloud.google.com/), enable the Gmail and Calendar APIs, and download the OAuth 2.0 credentials.
+
+3.⁠ ⁠*Run the automation script:*
+   ⁠ bash
+   python3 src/event_auto.py
+    ⁠
+   This script reads your emails using the Llama 3 model via Ollama, extracts event information, and automatically creates corresponding Google Calendar events.
+
 ---
 
 ## 🏗️ Architecture
@@ -70,7 +88,7 @@ job_agent.py (Main CLI)
 
 ### 1️⃣ **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/job-intelligence-agent.git
+git clone https://github.com/patelkirtan29/aws_hackathon
 cd job-intelligence-agent
 ```
 
