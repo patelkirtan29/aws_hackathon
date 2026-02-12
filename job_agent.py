@@ -1,32 +1,28 @@
-# job_agent.py
+from __future__ import annotations
+
 """
 Job Intelligence Agent
 Modes:
 (1) Job Research  -> recent highlights + links + job postings + past questions (CSV + auto-fetch if enabled)
-(2) Scan Inbox→Calendar -> keeps your existing email scan summary logic
-
-✅ Fixes included:
-- Handles Linkup SDK returning Pydantic objects (LinkupSourcedAnswer) OR dicts
-- Fixes gmail_reader import mismatch (uses fetch_recent_messages)
-- Keeps inbox scan output structure (Assessment/Phone/Technical/Onsite/Scheduling/Unclassified)
-- Past-questions CSV read errors won't crash job research (fails gracefully)
-- Optional: creates calendar events only if start time exists & dry_run=False
+(2) Scan Inbox->Calendar -> keeps your existing email scan summary logic
 """
 
-from __future__ import annotations
+# This prevents UnicodeEncodeError when printing on Windows terminals.
+import sys
 
-from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Tuple
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+import urllib.parse
+from datetime import datetime
+from typing import Dict, Any, List, Tuple
 
 from linkup_job import linkup_search
-
-# gmail_reader.py in your repo has: fetch_recent_messages(max_results=50, query=None)
 from gmail_reader import fetch_recent_messages
-
 from interview_parser import parse_interview_details
 
-# your file is calendar_push.py (not calender_push.py)
-# create_event() should exist there. If you don't want calendar push, it won't crash (wrapped).
 try:
     from calendar_push import create_event
 except Exception:
@@ -41,7 +37,7 @@ from past_questions import get_past_questions
 
 def _as_dict(res: Any) -> Dict[str, Any]:
     """
-    Linkup SDK may return a Pydantic model (e.g., LinkupSourcedAnswer) instead of dict.
+    Linkup SDK may return a dict OR a Pydantic-like model.
     Normalize to a plain dict so .get() works everywhere.
     """
     if res is None:
@@ -73,10 +69,10 @@ def _as_dict(res: Any) -> Dict[str, Any]:
 
 def fetch_recent_emails(days: int = 30, max_results: int = 50) -> List[Dict[str, Any]]:
     """
-    Wrapper over gmail_reader.fetch_recent_messages() to match your old signature.
+    Wrapper over gmail_reader.fetch_recent_messages() to match the old signature.
     Uses Gmail query newer_than:Xd to reduce scanning.
     """
-    query = f'newer_than:{days}d'
+    query = f"newer_than:{days}d"
     return fetch_recent_messages(max_results=max_results, query=query)
 
 
@@ -85,12 +81,11 @@ def fetch_recent_emails(days: int = 30, max_results: int = 50) -> List[Dict[str,
 # =========================================================
 
 class JobIntelligenceAgent:
-
     # =====================================================
     # =============== JOB RESEARCH MODE ===================
     # =====================================================
 
-    def process_job(self, company: str, role: str):
+    def process_job(self, company: str, role: str) -> str:
         print("\n" + "=" * 70)
         print("🎯 JOB APPLICATION PROCESSING")
         print("=" * 70)
@@ -106,7 +101,7 @@ class JobIntelligenceAgent:
 
         print("\n" + brief)
 
-    # Save to file
+        # Save to file
         safe_company = company.replace(" ", "_")
         safe_role = role.replace(" ", "_")
         filename = f"prep_{safe_company}_{safe_role}.txt"
@@ -120,6 +115,7 @@ class JobIntelligenceAgent:
         print("JOB RESEARCH COMPLETE")
         print("=" * 70)
 
+        return filename
 
     def build_research_bundle(self, company: str, role: str) -> Dict[str, Any]:
         queries = [
@@ -130,7 +126,7 @@ class JobIntelligenceAgent:
 
         results: List[Dict[str, Any]] = []
         for q in queries:
-            raw = linkup_search(q)
+            raw = linkup_search(q)               # your normalized output from linkup_job.py
             res = _as_dict(raw)
             results.append({
                 "query": q,
@@ -152,8 +148,7 @@ class JobIntelligenceAgent:
         res = _as_dict(res)
         text = (res.get("answer") or "").strip()
 
-        # Keep bullet extraction simple + robust
-        lines = []
+        lines: List[str] = []
         for l in text.split("\n"):
             s = l.strip().lstrip("-•").strip()
             if len(s) >= 25:
@@ -165,7 +160,6 @@ class JobIntelligenceAgent:
     # -----------------------------------------------------
 
     def public_interview_themes(self) -> Dict[str, List[str]]:
-        # simple defaults (you can evolve later)
         return {
             "coding_topics": ["dp", "arrays", "strings", "hashmap", "stack/queue", "binary search", "trees", "graphs"],
             "system_design": ["queues/streams", "auth"],
@@ -183,20 +177,12 @@ class JobIntelligenceAgent:
             "Day 7: Mock interview (coding + behavioral). Behavioral: collaboration, execution, ownership",
         ]
 
-    def best_interview_links(self, company: str) -> List[str]:
-        c = (company or "").strip().lower()
-        if c == "tcs":
-            return [
-                "TCS SDE Sheet: Interview Questions and Answers - GeeksforGeeks",
-                "TCS Digital Interview experience - LeetCode Discuss",
-                "Top TCS Interview Questions - GeeksforGeeks",
-                "TCS Interview Questions - InterviewBit",
-            ]
-        # generic fallback (not company-specific URLs to keep it stable)
+    def best_interview_links(self, company: str, role: str) -> List[str]:
+        query = urllib.parse.quote_plus(f"{company} {role}")
         return [
-            "LeetCode Discuss — interview experiences (search company + role)",
-            "GeeksforGeeks — company interview questions (search company)",
-            "System Design Primer (GitHub) — fundamentals & checklists",
+            f"LeetCode Discuss — https://leetcode.com/discuss/?query={query}",
+            f"GeeksforGeeks — https://www.google.com/search?q=site:geeksforgeeks.org+{query}+interview+questions",
+            "System Design Primer (GitHub) — https://github.com/donnemartin/system-design-primer",
         ]
 
     def build_30_day_study_plan(self, role: str) -> List[str]:
@@ -242,6 +228,8 @@ class JobIntelligenceAgent:
         ]
 
     # -----------------------------------------------------
+    # Candidate brief formatting
+    # -----------------------------------------------------
 
     def format_candidate_brief(self, bundle: Dict[str, Any]) -> str:
         company = bundle["company"]
@@ -277,7 +265,7 @@ class JobIntelligenceAgent:
             if len(final_links) >= 3:
                 break
 
-        # Past questions (AUTO-FETCH if missing) — never crash the brief if CSV is messy
+        # Past questions — never crash if CSV is messy
         try:
             past_qs = get_past_questions(
                 company,
@@ -286,17 +274,15 @@ class JobIntelligenceAgent:
                 limit=8,
                 auto_fetch_if_missing=True,
             )
+            past_qs_error = ""
         except Exception as e:
             past_qs = []
-            # keep output clean; show a single-line hint
             past_qs_error = str(e)
-        else:
-            past_qs_error = ""
 
         themes = self.public_interview_themes()
         plan_7 = self.prep_plan_7_day()
         plan_30 = self.build_30_day_study_plan(role)
-        best_links = self.best_interview_links(company)
+        best_links = self.best_interview_links(company, role)
 
         lines: List[str] = []
         lines.append(f"RECENT JOB BRIEF — {company} ({role})")
@@ -316,7 +302,15 @@ class JobIntelligenceAgent:
             for s in final_links:
                 lines.append(f"- {s.get('title','Source')} — {s.get('url','')}")
         else:
-            lines.append("- No links available.")
+            # Always provide clickable links even when LinkUp sources are empty
+            q = urllib.parse.quote_plus(f"{company} {role}")
+            fallback_links = [
+                ("Google News", f"https://www.google.com/search?q={urllib.parse.quote_plus(company)}+latest+news&tbm=nws"),
+                ("LinkedIn Jobs", f"https://www.linkedin.com/jobs/search/?keywords={q}"),
+                ("Indeed", f"https://www.indeed.com/jobs?q={q}"),
+            ]
+            for title, url in fallback_links:
+                lines.append(f"- {title} — {url}")
 
         lines.append("")
         lines.append("🧑‍💻 Recent job postings (last 7 days bias; max 5):")
@@ -405,10 +399,8 @@ class JobIntelligenceAgent:
             if start_iso:
                 calendar_ready.append((entry, start_iso))
 
-                # create calendar event only if enabled + not dry_run
                 if (not dry_run) and create_event:
                     try:
-                        # create_event(title, start_iso, description, meeting_link)
                         create_event(
                             title=f"{company} — {stage}",
                             start_iso=start_iso,
@@ -417,10 +409,8 @@ class JobIntelligenceAgent:
                         )
                         created += 1
                     except Exception:
-                        # don't crash inbox scan if calendar auth/scopes are wrong
                         pass
 
-        # Print summary (keeps your layout)
         print("📊 INTERVIEW SUMMARY\n")
         for k in ["Assessment", "Phone Screen", "Technical Interview", "Onsite / Final", "Recruiter / Scheduling", "Unclassified"]:
             v = summary.get(k, [])
@@ -447,17 +437,12 @@ class JobIntelligenceAgent:
         print(f"Calendar events created: {created} (dry_run={dry_run})")
         print("=" * 70)
 
-    # =====================================================
-    # ================ MAIN LOOP ==========================
-    # =====================================================
-
-
 
 if __name__ == "__main__":
     agent = JobIntelligenceAgent()
 
     while True:
-        mode = input("\nChoose mode: (1) Job Research  (2) Scan Inbox→Calendar  (exit): ").strip().lower()
+        mode = input("\nChoose mode: (1) Job Research  (2) Scan Inbox->Calendar  (exit): ").strip().lower()
 
         if mode in ("exit", "q", "quit"):
             print("Bye 👋")
@@ -474,5 +459,4 @@ if __name__ == "__main__":
             agent.process_job(company, role)
             continue
 
-        # ✅ This is what you were missing (invalid input handler)
         print("Invalid option. Type 1, 2, or exit.")

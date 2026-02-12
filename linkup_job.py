@@ -2,6 +2,7 @@
 import os
 import re
 import time
+from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -29,17 +30,75 @@ def get_client():
     return LinkupClient(api_key=api_key)
 
 
-def linkup_search(query: str):
-    """
-    Robust call for SDKs that require: search(query, depth, output_type) POSITIONALLY.
+def _as_dict(obj: Any) -> Dict[str, Any]:
+    """Convert SDK objects to dict if needed."""
+    if isinstance(obj, dict):
+        return obj
+    # some SDKs return pydantic-like objects with .model_dump() or .dict()
+    if hasattr(obj, "model_dump"):
+        return obj.model_dump()
+    if hasattr(obj, "dict"):
+        return obj.dict()
+    # fallback: try vars
+    try:
+        return dict(vars(obj))
+    except Exception:
+        return {"value": obj}
 
-    Linkup sometimes returns 500 ([DecimalError] Invalid argument: undefined) depending
-    on depth/output_type. So we try multiple combinations and gracefully fall back.
+
+def normalize_linkup_response(raw: Any) -> Dict[str, Any]:
+    """
+    Force a consistent shape:
+      {
+        "error": bool,
+        "message": str | None,
+        "answer": str,
+        "sources": [{"title": str, "url": str}],
+        "raw": {...}   # for debugging
+      }
+    """
+    data = _as_dict(raw)
+
+    # Find answer text under common keys
+    answer = ""
+    for k in ["answer", "sourcedAnswer", "text", "output", "result"]:
+        v = data.get(k)
+        if isinstance(v, str) and v.strip():
+            answer = v.strip()
+            break
+
+    # Find sources under common keys (sources, citations, references)
+    sources_raw = None
+    for k in ["sources", "citations", "references"]:
+        if k in data and isinstance(data[k], list):
+            sources_raw = data[k]
+            break
+
+    sources: List[Dict[str, str]] = []
+    if isinstance(sources_raw, list):
+        for s in sources_raw:
+            sd = _as_dict(s)
+            url = sd.get("url") or sd.get("link") or sd.get("source") or ""
+            title = sd.get("title") or sd.get("name") or sd.get("label") or url
+            if isinstance(url, str) and url.strip():
+                sources.append({"title": str(title).strip(), "url": url.strip()})
+
+    return {
+        "error": bool(data.get("error", False)),
+        "message": data.get("message"),
+        "answer": answer,
+        "sources": sources,
+        "raw": data,  # keep for debug
+    }
+
+
+def linkup_search(query: str) -> Dict[str, Any]:
+    """
+    Calls LinkUp with multiple depth/output combos.
+    Returns normalized result with stable keys: answer + sources.
     """
     safe_query = sanitize_query(query)
 
-    # These are "likely" valid values; we try several to avoid the 500 bug.
-    # Keep list short for speed; reorder if you find one that’s stable.
     candidates = [
         ("shallow", "sourcedAnswer"),
         ("standard", "sourcedAnswer"),
@@ -58,32 +117,35 @@ def linkup_search(query: str):
             "query_used": safe_query,
             "answer": "",
             "sources": [],
+            "raw": {},
         }
 
-    last_err = None
+    last_err: Optional[Exception] = None
 
     for depth, output_type in candidates:
         try:
-            # REQUIRED positional signature in your SDK:
-            # search(query, depth, output_type)
-            return client.search(safe_query, depth, output_type)
+            raw = client.search(safe_query, depth, output_type)  # positional signature
+            normalized = normalize_linkup_response(raw)
+            normalized["query_used"] = safe_query
+            normalized["depth_used"] = depth
+            normalized["output_type_used"] = output_type
+            return normalized
         except Exception as e:
             last_err = e
-            # tiny backoff helps if API is flaky
             time.sleep(0.2)
 
-    # Fallback so the agent never crashes
     return {
         "error": True,
         "message": f"All Linkup attempts failed. Last error: {last_err}",
         "query_used": safe_query,
         "answer": "",
         "sources": [],
+        "raw": {},
     }
 
 
 if __name__ == "__main__":
-    # Optional test (safe — won't crash even if Linkup returns 500)
     res = linkup_search("Google AI latest updates last 30 days")
-    print("✅ linkup_search output:")
-    print(res)
+    print("✅ linkup_search normalized output:")
+    print("Answer:", (res.get("answer") or "")[:200])
+    print("Sources:", res.get("sources"))

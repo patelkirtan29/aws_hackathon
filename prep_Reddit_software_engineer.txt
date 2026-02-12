@@ -1,13 +1,13 @@
-RECENT JOB BRIEF — amazon (software engineer)
-Generated: 2026-02-11T22:49:19.405551
+RECENT JOB BRIEF — Reddit (software engineer)
+Generated: 2026-02-11T22:02:05.898703
 
 ✅ Recent highlights (min reading, max signal):
 - No highlights found (Linkup returned limited data).
 
 🔗 Top links (read max 3):
-- Google News — https://www.google.com/search?q=amazon+latest+news&tbm=nws
-- LinkedIn Jobs — https://www.linkedin.com/jobs/search/?keywords=amazon+software+engineer
-- Indeed — https://www.indeed.com/jobs?q=amazon+software+engineer
+- Google News — https://www.google.com/search?q=Reddit+latest+news&tbm=nws
+- LinkedIn Jobs — https://www.linkedin.com/jobs/search/?keywords=Reddit+software+engineer
+- Indeed — https://www.indeed.com/jobs?q=Reddit+software+engineer
 
 🧑‍💻 Recent job postings (last 7 days bias; max 5):
 - None found (try role synonyms like 'SWE' / 'Software Engineer').
@@ -36,6 +36,6 @@ Generated: 2026-02-11T22:49:19.405551
 • Week 4: Timed mocks (coding + behavioral)
 
 🔗 Best interview links (read 2–3):
-• LeetCode Discuss — https://leetcode.com/discuss/?query=amazon+software+engineer
-• GeeksforGeeks — https://www.google.com/search?q=site:geeksforgeeks.org+amazon+software+engineer+interview+questions
+• LeetCode Discuss — https://leetcode.com/discuss/?query=Reddit+software+engineer
+• GeeksforGeeks — https://www.google.com/search?q=site:geeksforgeeks.org+Reddit+software+engineer+interview+questions
 • System Design Primer (GitHub) — https://github.com/donnemartin/system-design-primer
