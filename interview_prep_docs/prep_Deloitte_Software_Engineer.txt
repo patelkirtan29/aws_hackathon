@@ -1,0 +1,25 @@
+RECENT JOB BRIEF — Deloitte (Software Engineer)
+Generated: 2026-02-11T14:41:25.173825
+
+✅ Recent highlights (min reading, max signal):
+1. Deloitte US is overhauling job titles for its entire US workforce, with new titles effective June 1, 2026. (Sources 1, 13)
+2. Deloitte reported global revenue of US$70.5 billion for FY2025, ending May 31, 2025, a 4.8% increase from FY2024. (Source 20)
+3. Deloitte is launching multiple recruitment drives for 2026, targeting freshers and final-year students in India and US-India offices, including roles like Associate Analyst, Senior Analyst, and...
+4. Deloitte plans to hire around 50,000 new employees in India, with expansion plans including Mangaluru as a potential site. (Sources 5, 19)
+5. Deloitte participated in CES 2026 showcasing innovation and AI-driven solutions. (Source 8)
+6. The Deloitte Software Engineer interview process (latest insights from 2025-2026) typically includes these rounds:
+
+🔗 Top links (read max 3):
+- Deloitte US launches company-wide overhaul of job titles amid AI shift | Employee Experience | HR Grapevine USA | News — https://www.hrgrapevine.com/us/content/article/2026-01-30-deloitte-plans-us-wide-reset-of-job-titles-as-it-incorporates-ai
+- Newsroom | Deloitte US — https://www.deloitte.com/us/en/about/recognition/news.html
+- Deloitte Recruitment 2026: Amazing Opportunity! Apply Now — https://hiddenjobalert.com/deloitte-recruitment-2026/
+
+🧑‍💻 Recent job postings (last 7 days bias; max 5):
+- Deloitte Recruitment | Deloittee Jobs for Freshers - Freshers Job — https://freshers.jobs/deloitte-recruitment/
+- 14 Software Engineering Jobs to Apply for This Week — https://www.purpose.jobs/blog/14-software-engineering-jobs
+- Developer Jobs (January 2026) — https://startup.jobs/developer-jobs
+- Job Application for Software Engineer Intern (Summer 2026) - Austin, TX at Cloudflare — https://job-boards.greenhouse.io/cloudflare/jobs/7206269?gh_jid=7206269
+- Insights on Global Software Engineering Job Openings January 2026 — https://corvi.careers/blog/global_software-engineering_jobs_january_2026/
+
+🧠 Past interview questions (from your CSV):
+- No CSV matches found (add rows to past_questions.csv).

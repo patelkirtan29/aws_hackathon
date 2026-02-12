@@ -1,0 +1,20 @@
+RECENT JOB BRIEF — Salesforce (Software Engineer)
+Generated: 2026-02-09T13:40:43.100816
+
+✅ Recent highlights (min reading, max signal):
+1. [News] Fiscal Q1 2026 (ended April 30, 2025): Revenue $9.8B, up 8% Y/Y; cRPO up 12% Y/Y; announced acquisition of Informatica Inc.; Spring 2025 Product Release. (Sources 1, 6)
+2. [News] Fiscal Q2 2026 (ended July 31, 2025): Revenue $10.2B, up 10% Y/Y; subscription support revenue up 11% Y/Y; announced $20B increase to share repurchase program; Q2 Product and Innovation Overview...
+3. [News] Fiscal Q3 2026 (ended October 31, 2025): Revenue $10.3B, up 9% Y/Y; cRPO up 11% Y/Y; Agentforce surpassed 3.2 trillion tokens; raised fiscal 2026 revenue guidance to $41.45-$41.55B; Winter 2026...
+4. [Signal] Upcoming: Fiscal Q4 and full year 2026 results to be released Feb 25, 2026, with conference call at 2:00 p.m. PT. (Sources 8, 13, 20)
+5. [Tech] Product launches and innovations include Spring 2025, Winter 2026 releases, new real-time search API, Model Context Protocol server, enhanced Slack developer tools, and Agentforce Channel Expert....
+6. [Signal] Salesforce's Agentforce platform is a key focus for 2025 and 2026, enabling autonomous AI agents integrated deeply with Salesforce data and workflows, supporting sales, service, marketing, and data...
+
+🔗 Top links (read max 3):
+- Salesforce.com, Inc. - Salesforce Reports Record First Quarter Fiscal 2026 Results — https://investor.salesforce.com/news/news-details/2025/Salesforce-Reports-Record-First-Quarter-Fiscal-2026-Results/default.aspx
+- Salesforce.com, Inc. - Salesforce Delivers Record Third Quarter Fiscal 2026 Results Driven by Agentforce & Data 360 — https://investor.salesforce.com/news/news-details/2025/Salesforce-Delivers-Record-Third-Quarter-Fiscal-2026-Results-Driven-by-Agentforce--Data-360/default.aspx
+- Salesforce Delivers Record Third Quarter Fiscal 2026 Results Driven by Agentforce & Data 360 - Salesforce — https://www.salesforce.com/news/press-releases/2025/12/03/fy26-q3-earnings/?bc=OTH
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why Salesforce now?' points from the News bullets
+- Prepare: 2 coding patterns + 1 ML/system-design topic aligned to Tech bullets

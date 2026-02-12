@@ -1,0 +1,20 @@
+RECENT JOB BRIEF — IBM (Software Engineer)
+Generated: 2026-02-09T13:22:58.351704
+
+✅ Recent highlights (min reading, max signal):
+1. [News] IBM reported strong Q4 2025 earnings on January 28, 2026, with EPS of $4.52 beating estimates and revenue of $19.7B, driving a 5.23% after-hours stock increase. (Sources 2, 4, 5, 7, 9, 14, 15)
+2. [News] IBM expects full-year 2026 revenue growth to exceed 5%, with software segment expansion of about 10% and free cash flow projected at $15.7B. (Sources 2, 4, 5, 7, 14)
+3. [Signal] IBM announced a cash dividend of $1.68 with an ex-date of February 10, 2026. (Source 6)
+4. [Signal] IBM unveiled the Quantum Nighthawk processor in November 2025, advancing quantum computing capabilities. (Source 3)
+5. [Signal] IBM and Pearson announced a global partnership in December 2025 to build AI-powered learning tools. (Source 3)
+6. [Tech] IBM's recent and upcoming roadmap for AI agents infrastructure includes:
+
+🔗 Top links (read max 3):
+- International Business Machines (IBM) Earnings Date and Reports 2026 $IBM — https://www.marketbeat.com/stocks/NYSE/IBM/earnings/
+- IBM earnings Q4 2025 — https://www.cnbc.com/2026/01/28/ibm-earnings-q4-2025.html
+- IBM - Announcements — https://newsroom.ibm.com/announcements?l=100
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why IBM now?' points from the News bullets
+- Prepare: 2 coding patterns + 1 ML/system-design topic aligned to Tech bullets

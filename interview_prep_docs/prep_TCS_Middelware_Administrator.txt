@@ -1,0 +1,20 @@
+RECENT JOB BRIEF — TCS (Middelware Administrator)
+Generated: 2026-02-09T13:42:47.207263
+
+✅ Recent highlights (min reading, max signal):
+1. [News] Q3 FY 2026 financial results for the quarter ending December 31, 2025, reported on January 12, 2026, showing AI-led growth, strong order book, and consolidated revenues exceeding $30 billion for...
+2. [Signal] TCS declared a dividend of Rs 57 per share (including Rs 11 interim and Rs 46 special) with record date January 17, 2026, and payment date February 3, 2026. (Sources 13, 14, 20)
+3. [Signal] TCS launched the Automotive Digital Twindex at CES 2026 in January 2026. (Sources 1, 5, 9, 15)
+4. [Signal] TCS named Top Employer in Europe for the 14th consecutive year by the Top Employers Institute in January 2026. (Sources 5, 8, 15)
+5. [News] TCS announced major capital investments in AI infrastructure, including a new subsidiary to build a 1-gigawatt sovereign AI data center in India with phased funding over 5-7 years. (Sources 1, 2)
+6. [Tech] TCS's recent AI projects and roadmap for AI agents and infrastructure include:
+
+🔗 Top links (read max 3):
+- TCS sets course to become the world’s largest AI-led technology services company — https://www.tcs.com/who-we-are/newsroom/press-release/tcs-financial-results-q2-fy-2026
+- TCS Q2-2026 Earnings Call - Alpha Spread — https://www.alphaspread.com/security/nse/tcs/investor-relations/earnings-call/q2-2026
+- AI-led Growth and Strong Order Book highlight TCS’ Q3 — https://www.tcs.com/who-we-are/newsroom/press-release/tcs-financial-results-q3-fy-2026
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why TCS now?' points from the News bullets
+- Prepare: 2 coding patterns + 1 ML/system-design topic aligned to Tech bullets

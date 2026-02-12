@@ -1,0 +1,22 @@
+RECENT JOB BRIEF — Microsoft (AI/ML Engineer)
+Generated: 2026-02-09T12:51:16.785416
+
+✅ Key highlights (last 30 days bias):
+1. Recent Microsoft announcements and releases include:
+2. On January 28, 2026, Microsoft announced Q2 fiscal 2026 earnings: revenue of $81.3 billion (up 17% YoY), operating income of $38.3 billion (up 21%), and net income of $38.5 billion...
+3. Microsoft raised prices for commercial Office productivity software subscriptions during this quarter. (Source 3)
+4. The launch of SQL Server 2025 occurred in December 2025, benefiting on-premises server business revenue growth. (Sources 6, 7)
+5. Azure and other cloud services revenue grew 39% in Q2 2026, supported by broad demand and efficiency gains. (Source 16)
+6. Microsoft AI/ML Engineer interview process (latest 2025-2026 insights):
+7. The process typically starts with an online coding and ML quiz testing Python proficiency, algorithms, and foundational ML concepts.
+8. Successful candidates proceed to multiple virtual or onsite interview rounds covering:
+
+🔗 Top links (read max 3):
+- FY26 Q2 - Press Releases - Investor Relations - Microsoft — https://www.microsoft.com/en-us/investor/earnings/fy-2026-q2/press-release-webcast
+- FY26 Q1 - Press Releases - Investor Relations - Microsoft — https://www.microsoft.com/en-us/investor/earnings/fy-2026-q1/press-release-webcast
+- Microsoft (MSFT) Q2 earnings report 2026 — https://www.cnbc.com/2026/01/28/microsoft-msft-q2-earnings-report-2026.html
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Prepare 2 'Why this company now?' talking points
+- Prepare 1 system design topic + 2 coding patterns

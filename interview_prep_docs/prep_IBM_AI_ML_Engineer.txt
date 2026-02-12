@@ -1,0 +1,30 @@
+RECENT JOB BRIEF — IBM (AI/ML Engineer)
+Generated: 2026-02-11T14:13:37.582723
+
+✅ Recent highlights (min reading, max signal):
+1. In the last 30 days and recent period, IBM announced its Q4 2025 earnings on January 28, 2026, reporting EPS of $4.52, beating expectations, with revenue of $19.7B and strong growth in software and...
+2. IBM's recent and upcoming roadmap for AI agents infrastructure includes:
+3. In Fall 2025, IBM Spyre Accelerator will enable enterprises to scale generative and agentic AI workloads on IBM Z, LinuxONE, and Power platforms, supporting agentic orchestration and infrastructure...
+4. IBM is advancing agentic AI-ready infrastructure with MCP servers and agentic capabilities across its hybrid cloud portfolio, aiming for broader availability and integration in 2026 to support...
+5. IBM and HashiCorp are collaborating on Project Infragraph, a knowledge graph infrastructure automation data platform that AI agents can query for automated operations, demonstrated in late 2025...
+6. IBM emphasizes the need to reimagine operational infrastructure in 2026 to orchestrate large agentic AI estates reliably, focusing on governance, orchestration, and measurement frameworks beyond...
+
+🔗 Top links (read max 3):
+- International Business Machines (IBM) Earnings Date and Reports 2026 $IBM — https://www.marketbeat.com/stocks/NYSE/IBM/earnings/
+- IBM (IBM) Earnings Date & Report - Investing.com — https://www.investing.com/equities/ibm-earnings
+- IBM - Announcements — https://newsroom.ibm.com/announcements
+
+🧑‍💻 Recent job postings (last 7 days bias; max 5):
+- IBM Recruitment | IBM Careers | IBM Jobs for Freshers — https://freshers.jobs/ibm-recruitment/
+- AI/ML Engineer — https://philips.wd3.myworkdayjobs.com/en-US/jobs-and-careers/job/AI-ML-Ops-Engineer_538464
+- AI/ML Engineer, Professional Services, Professional Services - Job ID: 2949852 | Amazon.jobs — https://www.amazon.jobs/en/jobs/2949852/ai-ml-engineer-professional-services-professional-services
+- Job Application for Lead AI/ML Engineer (P2122) at 84.51° — https://job-boards.greenhouse.io/8451/jobs/7771257002
+- AI/ML Engineer - Careers - Myworkdayjobs.com — https://manulife.wd3.myworkdayjobs.com/en-US/MFCJH_AdminJobs/job/AI-ML-Engineer_JR25011431
+
+🧠 Past interview questions (from your CSV; top picks):
+- No CSV matches found (add rows to past_questions.csv).
+
+🎯 Candidate next steps (10 minutes):
+- Read the 3 links above
+- Write 2 'Why IBM now?' points from the highlights
+- Prepare: 2 coding patterns + 1 system-design topic

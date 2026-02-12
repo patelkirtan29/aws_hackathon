@@ -1,0 +1,43 @@
+# Python virtual environments
+venv/
+env/
+.venv/
+venv3/
+venv2/
+
+# Virtualenv wrappers
+.virtualenv/
+
+# Env files (secrets)
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Pytest cache
+.pytest_cache/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# macOS
+.DS_Store
+
+# Other
+*.log
+job_applications.json
